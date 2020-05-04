@@ -1,0 +1,17 @@
+{
+  "name": "gap-secret-backup-operator",
+  "version": "0.0.1",
+  "description": "",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node src/index.js"
+  },
+  "author": "Gergo Tolnai",
+  "license": "MIT",
+  "dependencies": {
+    "@dot-i/k8s-operator": "^1.0.1",
+    "@kubernetes/client-node": "^0.11.2",
+    "lodash": "^4.17.15"
+  }
+}
