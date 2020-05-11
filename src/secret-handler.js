@@ -42,9 +42,9 @@ module.exports = class SecretHandler {
       metadata: {
         name: secretName,
         labels: {
-          backup: "true",
-        },
-      },
+          backup: "true"
+        }
+      }
     };
 
     await this.k8sApi.createNamespacedSecret(namespace, backup);
@@ -59,8 +59,8 @@ module.exports = class SecretHandler {
       namespace,
       {
         stringData: {
-          BACKUP: JSON.stringify([backupValue, ...previousBackup]),
-        },
+          BACKUP: JSON.stringify([backupValue, ...previousBackup])
+        }
       },
       undefined,
       undefined,
@@ -68,8 +68,8 @@ module.exports = class SecretHandler {
       undefined,
       {
         headers: {
-          "Content-Type": "application/merge-patch+json",
-        },
+          "Content-Type": "application/merge-patch+json"
+        }
       }
     );
   }
