@@ -25,7 +25,10 @@ module.exports = class SecretHandler {
     if (!(await this.doesSecretExist(backupName, namespace))) {
       await this.createSecret(backupName, namespace);
     }
-    await this.createBackup(backupName, namespace, secretValue);
+    await this.createBackup(backupName, namespace, {
+      data: secretValue,
+      backupTime: new Date()
+    });
   }
 
   async doesSecretExist(secretName, namespace) {
