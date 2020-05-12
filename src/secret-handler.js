@@ -1,6 +1,8 @@
 const k8s = require("@kubernetes/client-node");
 const { mapValues } = require("lodash");
 
+const BACKUP_KEY = "BACKUP";
+
 module.exports = class SecretHandler {
   constructor() {
     const kc = new k8s.KubeConfig();
@@ -55,14 +57,16 @@ module.exports = class SecretHandler {
 
   async createBackup(backupName, namespace, backupValue) {
     const rawBackup = await this.get(backupName, namespace);
-    const previousBackup = rawBackup.backup ? JSON.parse(rawBackup.backup) : [];
+    const previousBackup = rawBackup[BACKUP_KEY]
+      ? JSON.parse(rawBackup[BACKUP_KEY])
+      : [];
 
     await this.k8sApi.patchNamespacedSecret(
       backupName,
       namespace,
       {
         stringData: {
-          BACKUP: JSON.stringify([backupValue, ...previousBackup])
+          [BACKUP_KEY]: JSON.stringify([backupValue, ...previousBackup])
         }
       },
       undefined,
