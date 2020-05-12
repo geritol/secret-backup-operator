@@ -82,5 +82,25 @@ describe("secret-handler", () => {
         ...backedUpSecrets
       ]);
     });
+
+    it("should limit the backup size to 1mb", async () => {
+      const oneMbString = "1".repeat(1024 * 1024);
+
+      const { readNamespacedSecret, patchNamespacedSecret } = stubK8s();
+      readNamespacedSecret.resolves({ body: { data: { key: oneMbString } } });
+      const secretHandler = new SecretHandler();
+
+      await secretHandler.backup("secret-name", "namespace");
+
+      expect(patchNamespacedSecret).to.have.been.calledWith(
+        "secret-name-backup",
+        "namespace",
+        {
+          stringData: {
+            BACKUP: JSON.stringify([])
+          }
+        }
+      );
+    });
   });
 });

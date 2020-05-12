@@ -1,7 +1,9 @@
 const k8s = require("@kubernetes/client-node");
+const limitJsonListSize = require("./limit-json-list-size");
 const { mapValues } = require("lodash");
 
 const BACKUP_KEY = "BACKUP";
+const ONE_MB = 1024 * 1024;
 
 module.exports = class SecretHandler {
   constructor() {
@@ -61,12 +63,16 @@ module.exports = class SecretHandler {
       ? JSON.parse(rawBackup[BACKUP_KEY])
       : [];
 
+    const backup = JSON.stringify(
+      limitJsonListSize([backupValue, ...previousBackup], ONE_MB)
+    );
+
     await this.k8sApi.patchNamespacedSecret(
       backupName,
       namespace,
       {
         stringData: {
-          [BACKUP_KEY]: JSON.stringify([backupValue, ...previousBackup])
+          [BACKUP_KEY]: backup
         }
       },
       undefined,
