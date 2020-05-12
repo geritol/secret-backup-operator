@@ -21,6 +21,7 @@
   },
   "devDependencies": {
     "chai": "^4.2.0",
+    "chai-subset": "^1.6.0",
     "eslint": "^7.0.0",
     "eslint-config-emarsys": "^5.1.0",
     "eslint-config-prettier": "^6.11.0",
