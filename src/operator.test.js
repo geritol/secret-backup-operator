@@ -1,4 +1,5 @@
 const { ResourceEventType } = require("@dot-i/k8s-operator");
+const K8sOperator = require("@dot-i/k8s-operator").default;
 const sinon = require("sinon");
 const { expect } = require("./test-setup");
 const Operator = require("./operator");
@@ -10,9 +11,9 @@ describe("operator", () => {
       .stub(SecretHandler.prototype, "backup")
       .resolves();
 
-    this.operator = new Operator();
+    this.watchResourceMock = sinon.stub(K8sOperator.prototype, "watchResource");
 
-    this.watchResourceMock = sinon.stub(this.operator, "watchResource");
+    this.operator = new Operator();
   });
   afterEach(() => {
     this.operator.stop();
@@ -27,44 +28,32 @@ describe("operator", () => {
             "cert-manager.io/certificate-name": "tls"
           }
         }
-      }
+      },
+      type: ResourceEventType.Modified
     };
 
-    await this.watchResourceMock.callsArgWith(3, invalidTestEvent);
+    this.watchResourceMock.callsArgWith(3, invalidTestEvent);
 
     await this.operator.start();
 
     expect(this.secretHandlerBackupMock).to.not.have.been.called;
   });
 
-  it("should not call secretHandlerBackupMock if the event type is ResourceEventType.Added", async () => {
-    const invalidTestEvent = {
-      object: {
-        metadata: {}
-      },
-      type: ResourceEventType.Added
-    };
+  [ResourceEventType.Added, ResourceEventType.Deleted].forEach((type) => {
+    it(`should not create a backup when the event type is ResourceEventType.${type}`, async () => {
+      const invalidTestEvent = {
+        object: {
+          metadata: {}
+        },
+        type
+      };
 
-    await this.watchResourceMock.callsArgWith(3, invalidTestEvent);
+      this.watchResourceMock.callsArgWith(3, invalidTestEvent);
 
-    await this.operator.start();
+      await this.operator.start();
 
-    expect(this.secretHandlerBackupMock).to.not.have.been.called;
-  });
-
-  it("should not call secretHandlerBackupMock if the event type is ResourceEventType.Deleted", async () => {
-    const invalidTestEvent = {
-      object: {
-        metadata: {}
-      },
-      type: ResourceEventType.Deleted
-    };
-
-    await this.watchResourceMock.callsArgWith(3, invalidTestEvent);
-
-    await this.operator.start();
-
-    expect(this.secretHandlerBackupMock).to.not.have.been.called;
+      expect(this.secretHandlerBackupMock).to.not.have.been.called;
+    });
   });
 
   it("should not call secretHandlerBackupMock if the secret has backup label", async () => {
@@ -79,7 +68,7 @@ describe("operator", () => {
       type: ResourceEventType.Modified
     };
 
-    await this.watchResourceMock.callsArgWith(3, invalidTestEvent);
+    this.watchResourceMock.callsArgWith(3, invalidTestEvent);
 
     await this.operator.start();
 
@@ -87,23 +76,25 @@ describe("operator", () => {
   });
 
   it("should call secretHandlerBackupMock with the metadata name and namespace", async () => {
+    const validObjectMetadata = {
+      name: "name",
+      namespace: "namespace"
+    };
+
     const validTestEvent = {
       object: {
-        metadata: {
-          name: "name",
-          namespace: "namespace"
-        }
+        metadata: validObjectMetadata
       },
       type: ResourceEventType.Modified
     };
 
-    await this.watchResourceMock.callsArgWith(3, validTestEvent);
+    this.watchResourceMock.callsArgWith(3, validTestEvent);
 
     await this.operator.start();
 
     expect(this.secretHandlerBackupMock).to.have.been.calledWith(
-      "name",
-      "namespace"
+      validObjectMetadata.name,
+      validObjectMetadata.namespace
     );
   });
 });
