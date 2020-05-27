@@ -20,61 +20,54 @@ describe("operator", () => {
     sinon.restore();
   });
 
-  it("should not call secretHandlerBackupMock if the secret has 'cert-manager.io/certificate-name' annotation", async () => {
-    const invalidTestEvent = {
-      object: {
-        metadata: {
-          annotations: {
-            "cert-manager.io/certificate-name": "tls"
+  [
+    {
+      event: {
+        object: {
+          metadata: {
+            annotations: {
+              "cert-manager.io/certificate-name": "tls"
+            }
           }
-        }
+        },
+        type: ResourceEventType.Modified
       },
-      type: ResourceEventType.Modified
-    };
-
-    this.watchResourceMock.callsArgWith(3, invalidTestEvent);
-
-    await this.operator.start();
-
-    expect(this.secretHandlerBackupMock).to.not.have.been.called;
-  });
-
-  Object.values(ResourceEventType)
-    .filter((type) => type !== ResourceEventType.Modified)
-    .forEach((type) => {
-      it(`should not create a backup when the event type is ${type}`, async () => {
-        const invalidTestEvent = {
-          object: {
-            metadata: {}
+      eventDescription: "has 'cert-manager.io/certificate-name' annotation"
+    },
+    {
+      event: {
+        object: {
+          metadata: {
+            labels: {
+              backup: true
+            }
+          }
+        },
+        type: ResourceEventType.Modified
+      },
+      eventDescription: "has backup:true label"
+    },
+    ...Object.values(ResourceEventType)
+      .filter((type) => type !== ResourceEventType.Modified)
+      .map((type) => {
+        return {
+          event: {
+            object: {
+              metadata: {}
+            },
+            type
           },
-          type
+          eventDescription: `has ${type} type`
         };
+      })
+  ].forEach((testObject) => {
+    it(`should not create backup, when event: ${testObject.eventDescription}`, async () => {
+      this.watchResourceMock.callsArgWith(3, testObject.event);
 
-        this.watchResourceMock.callsArgWith(3, invalidTestEvent);
+      await this.operator.start();
 
-        await this.operator.start();
-
-        expect(this.secretHandlerBackupMock).to.not.have.been.called;
-      });
+      expect(this.secretHandlerBackupMock).to.not.have.been.called;
     });
-
-  it("should not call secretHandlerBackupMock if the secret has backup label", async () => {
-    const invalidTestEvent = {
-      object: {
-        metadata: {
-          labels: {
-            backup: true
-          }
-        }
-      },
-      type: ResourceEventType.Modified
-    };
-
-    this.watchResourceMock.callsArgWith(3, invalidTestEvent);
-
-    await this.operator.start();
-
-    expect(this.secretHandlerBackupMock).to.not.have.been.called;
   });
 
   it("should call secretHandlerBackupMock with the metadata name and namespace", async () => {
