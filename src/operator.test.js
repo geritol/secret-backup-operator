@@ -39,22 +39,24 @@ describe("operator", () => {
     expect(this.secretHandlerBackupMock).to.not.have.been.called;
   });
 
-  [ResourceEventType.Added, ResourceEventType.Deleted].forEach((type) => {
-    it(`should not create a backup when the event type is ResourceEventType.${type}`, async () => {
-      const invalidTestEvent = {
-        object: {
-          metadata: {}
-        },
-        type
-      };
+  Object.values(ResourceEventType)
+    .filter((type) => type !== ResourceEventType.Modified)
+    .forEach((type) => {
+      it(`should not create a backup when the event type is ${type}`, async () => {
+        const invalidTestEvent = {
+          object: {
+            metadata: {}
+          },
+          type
+        };
 
-      this.watchResourceMock.callsArgWith(3, invalidTestEvent);
+        this.watchResourceMock.callsArgWith(3, invalidTestEvent);
 
-      await this.operator.start();
+        await this.operator.start();
 
-      expect(this.secretHandlerBackupMock).to.not.have.been.called;
+        expect(this.secretHandlerBackupMock).to.not.have.been.called;
+      });
     });
-  });
 
   it("should not call secretHandlerBackupMock if the secret has backup label", async () => {
     const invalidTestEvent = {
