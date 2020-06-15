@@ -1,8 +1,8 @@
-FROM node
-
-COPY package*.json ./
+FROM node:12-slim as build
+WORKDIR /usr/secret-backup-operator
+COPY ./package*.json ./
 RUN npm ci
+COPY . .
 
-COPY . . 
-
-CMD ["npm", "start"]
+FROM build as test
+CMD ["npm", "run", "test"]

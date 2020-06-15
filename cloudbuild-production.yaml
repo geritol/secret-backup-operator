@@ -1,0 +1,16 @@
+steps:
+  - name: "gcr.io/cloud-builders/docker"
+    args:
+      ["build", "--target", "test", "-t", "secret-backup-operator-test", "."]
+  - name: "secret-backup-operator-test"
+    dir: "/usr/secret-backup-operator"
+  - name: "gcr.io/cloud-builders/docker"
+    args:
+      [
+        "build",
+        "-t",
+        "gcr.io/ems-gap-images/secret-backup-operator:$TAG_NAME",
+        ".",
+      ]
+images: ["gcr.io/ems-gap-images/secret-backup-operator:$TAG_NAME"]
+tags: ["secret-backup-operator"]
