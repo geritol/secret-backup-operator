@@ -9,8 +9,8 @@ steps:
       [
         "build",
         "-t",
-        "gcr.io/ems-gap-images/secret-backup-operator:$TAG_NAME",
+        "eu.gcr.io/ems-gap-images/secret-backup-operator:$TAG_NAME",
         ".",
       ]
-images: ["gcr.io/ems-gap-images/secret-backup-operator:$TAG_NAME"]
+images: ["eu.gcr.io/ems-gap-images/secret-backup-operator:$TAG_NAME"]
 tags: ["secret-backup-operator"]
