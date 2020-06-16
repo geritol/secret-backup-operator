@@ -8,4 +8,4 @@ FROM build AS test
 CMD ["npm", "run", "test"]
 
 FROM build AS prod
-CMD ["npm", "run", "start"]
+CMD ["npm", "start"]
