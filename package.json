@@ -17,7 +17,7 @@
   "dependencies": {
     "@dot-i/k8s-operator": "^1.0.1",
     "@kubernetes/client-node": "^0.11.2",
-    "lodash": "^4.17.15"
+    "lodash": "^4.17.19"
   },
   "devDependencies": {
     "chai": "^4.2.0",
