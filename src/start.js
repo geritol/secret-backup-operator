@@ -6,7 +6,8 @@ module.exports = async () => {
 
   console.log("Secret operator running");
 
-  const exit = () => {
+  const exit = (type) => {
+    console.log(`Secret operator exited with ${type}`);
     operator.stop();
     process.exit(0);
   };

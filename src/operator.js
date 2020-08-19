@@ -24,7 +24,9 @@ module.exports = class SecretBackupOperator extends Operator {
         return;
       }
 
-      console.log(`${e.type} ${object.metadata.name}`);
+      const date = new Date().toISOString();
+
+      console.log(`(${date}) ${e.type} ${object.metadata.name}`);
 
       await secretHandler
         .backup(object.metadata.name, object.metadata.namespace)
