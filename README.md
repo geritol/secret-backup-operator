@@ -6,7 +6,7 @@ Backup data is stored in an other secret `<secret-name>-backup`, that has a sing
 
 ## Setup
 
-To be able to run this on a cluster ypu need to deploy a deployment that runs an image built using the provided `Dockerfile`, the pods need to run with a `ServiceAccount` that is authorized to read, watch and edit secrets. Eg.:
+To be able to run this on a cluster you need to deploy a Deployment that runs an image built using the provided `Dockerfile`, the pods need to run with a `ServiceAccount` that is authorized to create, read, watch and edit secrets. Eg.:
 
 ```yaml
 apiVersion: v1
