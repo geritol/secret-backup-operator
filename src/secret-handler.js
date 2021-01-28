@@ -67,23 +67,10 @@ module.exports = class SecretHandler {
       limitJsonListSize([backupValue, ...previousBackup], ONE_MB)
     );
 
-    await this.k8sApi.patchNamespacedSecret(
-      backupName,
-      namespace,
-      {
-        stringData: {
-          [BACKUP_KEY]: backup
-        }
-      },
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      {
-        headers: {
-          "Content-Type": "application/merge-patch+json"
-        }
+    await this.k8sApi.replaceNamespacedSecret(backupName, namespace, {
+      stringData: {
+        [BACKUP_KEY]: backup
       }
-    );
+    });
   }
 };
