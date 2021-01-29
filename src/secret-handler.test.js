@@ -6,17 +6,17 @@ const k8s = require("@kubernetes/client-node");
 const now = new Date();
 
 const stubK8s = () => {
-  const patchNamespacedSecret = sinon.stub();
+  const replaceNamespacedSecret = sinon.stub();
   const readNamespacedSecret = sinon.stub();
   sinon.stub(k8s, "KubeConfig").returns({
     loadFromDefault: () => {},
     makeApiClient: () => ({
       readNamespacedSecret,
-      patchNamespacedSecret
+      replaceNamespacedSecret
     })
   });
 
-  return { patchNamespacedSecret, readNamespacedSecret };
+  return { replaceNamespacedSecret, readNamespacedSecret };
 };
 
 const encodeSecretValue = (value) => Buffer.from(value).toString("base64");
@@ -31,13 +31,13 @@ describe("secret-handler", () => {
   });
   describe("backup", () => {
     it("should add backupTime timestamp to backup value", async () => {
-      const { readNamespacedSecret, patchNamespacedSecret } = stubK8s();
+      const { readNamespacedSecret, replaceNamespacedSecret } = stubK8s();
       readNamespacedSecret.resolves({ body: { data: {} } });
       const secretHandler = new SecretHandler();
 
       await secretHandler.backup("secret-name", "namespace");
 
-      expect(patchNamespacedSecret).to.have.been.calledWith(
+      expect(replaceNamespacedSecret).to.have.been.calledWith(
         "secret-name-backup",
         "namespace",
         {
@@ -54,7 +54,7 @@ describe("secret-handler", () => {
         { data: { key: "value0" } }
       ];
       const newSecretValue = "value2";
-      const { readNamespacedSecret, patchNamespacedSecret } = stubK8s();
+      const { readNamespacedSecret, replaceNamespacedSecret } = stubK8s();
       readNamespacedSecret.withArgs("secret-name", "namespace").resolves({
         body: {
           data: { key: encodeSecretValue(newSecretValue) }
@@ -75,7 +75,7 @@ describe("secret-handler", () => {
       await secretHandler.backup("secret-name", "namespace");
 
       const parsedBackup = JSON.parse(
-        patchNamespacedSecret.getCall(0).args[2].stringData.BACKUP
+        replaceNamespacedSecret.getCall(0).args[2].stringData.BACKUP
       );
       expect(parsedBackup).to.containSubset([
         { data: { key: newSecretValue } },
@@ -86,13 +86,13 @@ describe("secret-handler", () => {
     it("should limit the backup size to 1mb", async () => {
       const oneMbString = "1".repeat(1024 * 1024);
 
-      const { readNamespacedSecret, patchNamespacedSecret } = stubK8s();
+      const { readNamespacedSecret, replaceNamespacedSecret } = stubK8s();
       readNamespacedSecret.resolves({ body: { data: { key: oneMbString } } });
       const secretHandler = new SecretHandler();
 
       await secretHandler.backup("secret-name", "namespace");
 
-      expect(patchNamespacedSecret).to.have.been.calledWith(
+      expect(replaceNamespacedSecret).to.have.been.calledWith(
         "secret-name-backup",
         "namespace",
         {
