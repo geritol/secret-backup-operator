@@ -41,6 +41,7 @@ describe("secret-handler", () => {
         "secret-name-backup",
         "namespace",
         {
+          metadata: { name: "secret-name-backup", labels: { backup: "true" } },
           stringData: {
             BACKUP: JSON.stringify([{ data: {}, backupTime: now }])
           }
@@ -96,6 +97,7 @@ describe("secret-handler", () => {
         "secret-name-backup",
         "namespace",
         {
+          metadata: { name: "secret-name-backup", labels: { backup: "true" } },
           stringData: {
             BACKUP: JSON.stringify([])
           }

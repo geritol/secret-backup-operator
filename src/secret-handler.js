@@ -68,6 +68,12 @@ module.exports = class SecretHandler {
     );
 
     await this.k8sApi.replaceNamespacedSecret(backupName, namespace, {
+      metadata: {
+        name: backupName,
+        labels: {
+          backup: "true"
+        }
+      },
       stringData: {
         [BACKUP_KEY]: backup
       }
