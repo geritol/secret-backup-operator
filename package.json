@@ -15,24 +15,24 @@
   "author": "Gergo Tolnai",
   "license": "MIT",
   "dependencies": {
-    "@dot-i/k8s-operator": "^1.0.1",
-    "@kubernetes/client-node": "^0.11.2",
-    "lodash": "^4.17.19"
+    "@dot-i/k8s-operator": "^1.1.1",
+    "@kubernetes/client-node": "^0.14.0",
+    "lodash": "^4.17.21"
   },
   "devDependencies": {
-    "chai": "^4.2.0",
+    "chai": "^4.3.4",
     "chai-subset": "^1.6.0",
-    "eslint": "^7.0.0",
+    "eslint": "^7.22.0",
     "eslint-config-emarsys": "^5.1.0",
-    "eslint-config-prettier": "^6.11.0",
-    "eslint-plugin-chai-expect": "^2.1.0",
+    "eslint-config-prettier": "^8.1.0",
+    "eslint-plugin-chai-expect": "^2.2.0",
     "eslint-plugin-chai-friendly": "^0.6.0",
     "eslint-plugin-no-only-tests": "^2.4.0",
-    "eslint-plugin-prettier": "^3.1.3",
+    "eslint-plugin-prettier": "^3.3.1",
     "eslint-plugin-security": "^1.4.0",
-    "mocha": "^7.1.2",
-    "prettier": "^2.0.5",
-    "sinon": "^9.0.2",
-    "sinon-chai": "^3.5.0"
+    "mocha": "^8.3.2",
+    "prettier": "^2.2.1",
+    "sinon": "^10.0.0",
+    "sinon-chai": "^3.6.0"
   }
 }
