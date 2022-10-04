@@ -1,4 +1,4 @@
-FROM node:12-slim AS build
+FROM node:18-slim AS build
 WORKDIR /usr/secret-backup-operator
 
 RUN apt update && \
